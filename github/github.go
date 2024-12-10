@@ -28,7 +28,7 @@ import (
 )
 
 const (
-	Version = "v66.0.0"
+	Version = "v67.0.0"
 
 	defaultAPIVersion = "2022-11-28"
 	defaultBaseURL    = "https://api.github.com/"
@@ -841,12 +841,17 @@ func (c *Client) BareDo(ctx context.Context, req *http.Request) (*Response, erro
 	}
 
 	resp, err := c.client.Do(req)
+	var response *Response
+	if resp != nil {
+		response = newResponse(resp)
+	}
+
 	if err != nil {
 		// If we got an error, and the context has been canceled,
 		// the context's error is probably more useful.
 		select {
 		case <-ctx.Done():
-			return nil, ctx.Err()
+			return response, ctx.Err()
 		default:
 		}
 
@@ -854,14 +859,12 @@ func (c *Client) BareDo(ctx context.Context, req *http.Request) (*Response, erro
 		if e, ok := err.(*url.Error); ok {
 			if url, err := url.Parse(e.URL); err == nil {
 				e.URL = sanitizeURL(url).String()
-				return nil, e
+				return response, e
 			}
 		}
 
-		return nil, err
+		return response, err
 	}
-
-	response := newResponse(resp)
 
 	// Don't update the rate limits if this was a cached response.
 	// X-From-Cache is set by https://github.com/gregjones/httpcache
@@ -1579,20 +1582,34 @@ func (c *Client) roundTripWithOptionalFollowRedirect(ctx context.Context, u stri
 	return resp, err
 }
 
+// Ptr is a helper routine that allocates a new T value
+// to store v and returns a pointer to it.
+func Ptr[T any](v T) *T {
+	return &v
+}
+
 // Bool is a helper routine that allocates a new bool value
 // to store v and returns a pointer to it.
+//
+// Deprecated: use Ptr instead.
 func Bool(v bool) *bool { return &v }
 
 // Int is a helper routine that allocates a new int value
 // to store v and returns a pointer to it.
+//
+// Deprecated: use Ptr instead.
 func Int(v int) *int { return &v }
 
 // Int64 is a helper routine that allocates a new int64 value
 // to store v and returns a pointer to it.
+//
+// Deprecated: use Ptr instead.
 func Int64(v int64) *int64 { return &v }
 
 // String is a helper routine that allocates a new string value
 // to store v and returns a pointer to it.
+//
+// Deprecated: use Ptr instead.
 func String(v string) *string { return &v }
 
 // roundTripperFunc creates a RoundTripper (transport).

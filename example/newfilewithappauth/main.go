@@ -16,7 +16,7 @@ import (
 	"time"
 
 	"github.com/bradleyfalzon/ghinstallation/v2"
-	"github.com/google/go-github/v66/github"
+	"github.com/google/go-github/v67/github"
 )
 
 func main() {
@@ -79,7 +79,7 @@ func main() {
 		"example/foo.txt",
 		&github.RepositoryContentFileOptions{
 			Content: []byte("foo"),
-			Message: github.String("sample commit"),
+			Message: github.Ptr("sample commit"),
 			SHA:     nil,
 		})
 	if err != nil {

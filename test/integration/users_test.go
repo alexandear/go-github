@@ -13,7 +13,7 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/google/go-github/v66/github"
+	"github.com/google/go-github/v67/github"
 )
 
 func TestUsers_Get(t *testing.T) {
@@ -190,8 +190,8 @@ func TestUsers_Keys(t *testing.T) {
 
 	// Add new key
 	_, _, err = client.Users.CreateKey(context.Background(), &github.Key{
-		Title: github.String("go-github test key"),
-		Key:   github.String(key),
+		Title: github.Ptr("go-github test key"),
+		Key:   github.Ptr(key),
 	})
 	if err != nil {
 		t.Fatalf("Users.CreateKey() returned error: %v", err)

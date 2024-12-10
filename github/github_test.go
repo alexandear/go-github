@@ -506,7 +506,7 @@ func TestNewRequest(t *testing.T) {
 	c := NewClient(nil)
 
 	inURL, outURL := "/foo", defaultBaseURL+"foo"
-	inBody, outBody := &User{Login: String("l")}, `{"login":"l"}`+"\n"
+	inBody, outBody := &User{Login: Ptr("l")}, `{"login":"l"}`+"\n"
 	req, _ := c.NewRequest("GET", inURL, inBody)
 
 	// test that relative URL was expanded
@@ -1103,6 +1103,51 @@ func TestDo_redirectLoop(t *testing.T) {
 	}
 	if err, ok := err.(*url.Error); !ok {
 		t.Errorf("Expected a URL error; got %#v.", err)
+	}
+}
+
+func TestDo_preservesResponseInHTTPError(t *testing.T) {
+	t.Parallel()
+	client, mux, _ := setup(t)
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintf(w, `{
+			"message": "Resource not found",
+			"documentation_url": "https://docs.github.com/rest/reference/repos#get-a-repository"
+		}`)
+	})
+
+	req, _ := client.NewRequest("GET", ".", nil)
+	var resp *Response
+	var data interface{}
+	resp, err := client.Do(context.Background(), req, &data)
+
+	if err == nil {
+		t.Fatal("Expected error response")
+	}
+
+	// Verify error type and access to status code
+	errResp, ok := err.(*ErrorResponse)
+	if !ok {
+		t.Fatalf("Expected *ErrorResponse error, got %T", err)
+	}
+
+	// Verify status code is accessible from both Response and ErrorResponse
+	if resp == nil {
+		t.Fatal("Expected response to be returned even with error")
+	}
+	if got, want := resp.StatusCode, http.StatusNotFound; got != want {
+		t.Errorf("Response status = %d, want %d", got, want)
+	}
+	if got, want := errResp.Response.StatusCode, http.StatusNotFound; got != want {
+		t.Errorf("Error response status = %d, want %d", got, want)
+	}
+
+	// Verify error contains proper message
+	if !strings.Contains(errResp.Message, "Resource not found") {
+		t.Errorf("Error message = %q, want to contain 'Resource not found'", errResp.Message)
 	}
 }
 
@@ -2877,4 +2922,19 @@ func TestClientCopy_leak_transport(t *testing.T) {
 	}
 
 	assertNoDiff(t, "Bearer bob", bob.GetLogin())
+}
+
+func TestPtr(t *testing.T) {
+	t.Parallel()
+	equal := func(t *testing.T, want, got any) {
+		t.Helper()
+		if !reflect.DeepEqual(want, got) {
+			t.Errorf("want %#v, got %#v", want, got)
+		}
+	}
+
+	equal(t, true, *Ptr(true))
+	equal(t, int(10), *Ptr(int(10)))
+	equal(t, int64(-10), *Ptr(int64(-10)))
+	equal(t, "str", *Ptr("str"))
 }
