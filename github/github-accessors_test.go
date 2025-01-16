@@ -29903,6 +29903,22 @@ func TestRuleset_GetUpdatedAt(tt *testing.T) {
 	r.GetUpdatedAt()
 }
 
+func TestRulesetConditions_GetOrganizationID(tt *testing.T) {
+	tt.Parallel()
+	r := &RulesetConditions{}
+	r.GetOrganizationID()
+	r = nil
+	r.GetOrganizationID()
+}
+
+func TestRulesetConditions_GetOrganizationName(tt *testing.T) {
+	tt.Parallel()
+	r := &RulesetConditions{}
+	r.GetOrganizationName()
+	r = nil
+	r.GetOrganizationName()
+}
+
 func TestRulesetConditions_GetRefName(tt *testing.T) {
 	tt.Parallel()
 	r := &RulesetConditions{}
@@ -32878,6 +32894,17 @@ func TestTeam_GetNodeID(tt *testing.T) {
 	t.GetNodeID()
 	t = nil
 	t.GetNodeID()
+}
+
+func TestTeam_GetNotificationSetting(tt *testing.T) {
+	tt.Parallel()
+	var zeroValue string
+	t := &Team{NotificationSetting: &zeroValue}
+	t.GetNotificationSetting()
+	t = &Team{}
+	t.GetNotificationSetting()
+	t = nil
+	t.GetNotificationSetting()
 }
 
 func TestTeam_GetOrganization(tt *testing.T) {

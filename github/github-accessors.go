@@ -23278,6 +23278,22 @@ func (r *Ruleset) GetUpdatedAt() Timestamp {
 	return *r.UpdatedAt
 }
 
+// GetOrganizationID returns the OrganizationID field.
+func (r *RulesetConditions) GetOrganizationID() *RulesetOrganizationIDsConditionParameters {
+	if r == nil {
+		return nil
+	}
+	return r.OrganizationID
+}
+
+// GetOrganizationName returns the OrganizationName field.
+func (r *RulesetConditions) GetOrganizationName() *RulesetOrganizationNamesConditionParameters {
+	if r == nil {
+		return nil
+	}
+	return r.OrganizationName
+}
+
 // GetRefName returns the RefName field.
 func (r *RulesetConditions) GetRefName() *RulesetRefConditionParameters {
 	if r == nil {
@@ -25596,6 +25612,14 @@ func (t *Team) GetNodeID() string {
 		return ""
 	}
 	return *t.NodeID
+}
+
+// GetNotificationSetting returns the NotificationSetting field if it's non-nil, zero value otherwise.
+func (t *Team) GetNotificationSetting() string {
+	if t == nil || t.NotificationSetting == nil {
+		return ""
+	}
+	return *t.NotificationSetting
 }
 
 // GetOrganization returns the Organization field.
