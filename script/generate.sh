@@ -6,6 +6,11 @@ set -e
 
 CDPATH="" cd -- "$(dirname -- "$0")/.."
 
+# force 1.22.0 default and "auto" toolchain (i.e., use the toolchain directive)
+# when running generate and mod tidy
+GOTOOLCHAIN="go1.22.0+auto"
+export GOTOOLCHAIN
+
 if [ "$1" = "--check" ]; then
   GENTEMP="$(mktemp -d)"
   git worktree add -q --detach "$GENTEMP"
@@ -42,7 +47,7 @@ MOD_DIRS="$(git ls-files '*go.mod' | xargs dirname | sort)"
 for dir in $MOD_DIRS; do
   (
     cd "$dir"
-    go generate ./...
-    go mod tidy -compat '1.21'
+    go generate './...'
+    go mod tidy
   )
 done
