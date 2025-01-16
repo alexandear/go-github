@@ -31868,17 +31868,6 @@ func TestSMTP_GetSupportAddressType(tt *testing.T) {
 	s.GetSupportAddressType()
 }
 
-func TestSMTP_GetUserName(tt *testing.T) {
-	tt.Parallel()
-	var zeroValue string
-	s := &SMTP{UserName: &zeroValue}
-	s.GetUserName()
-	s = &SMTP{}
-	s.GetUserName()
-	s = nil
-	s.GetUserName()
-}
-
 func TestSMTP_GetUsername(tt *testing.T) {
 	tt.Parallel()
 	var zeroValue string
@@ -31888,6 +31877,17 @@ func TestSMTP_GetUsername(tt *testing.T) {
 	s.GetUsername()
 	s = nil
 	s.GetUsername()
+}
+
+func TestSMTP_GetUserName(tt *testing.T) {
+	tt.Parallel()
+	var zeroValue string
+	s := &SMTP{UserName: &zeroValue}
+	s.GetUserName()
+	s = &SMTP{}
+	s.GetUserName()
+	s = nil
+	s.GetUserName()
 }
 
 func TestSNMP_GetCommunity(tt *testing.T) {
