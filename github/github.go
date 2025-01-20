@@ -987,7 +987,7 @@ func (c *Client) bareDoUntilFound(ctx context.Context, req *http.Request, maxRed
 			if maxRedirects <= 0 && rerr.StatusCode == http.StatusMovedPermanently {
 				return nil, response, fmt.Errorf("reached the maximum amount of redirections: %w", err)
 			}
-			return nil, response, fmt.Errorf("unexepected redirection response: %w", err)
+			return nil, response, fmt.Errorf("unexpected redirection response: %w", err)
 		}
 	}
 
@@ -1311,7 +1311,7 @@ func (r *RedirectionError) Is(target error) bool {
 
 	return r.StatusCode == v.StatusCode &&
 		(r.Location == v.Location || // either both locations are nil or exactly the same pointer
-			r.Location != nil && v.Location != nil && r.Location.String() == v.Location.String()) // or they are both not nil and marshalled identically
+			r.Location != nil && v.Location != nil && r.Location.String() == v.Location.String()) // or they are both not nil and marshaled identically
 }
 
 // sanitizeURL redacts the client_secret parameter from the URL which may be
